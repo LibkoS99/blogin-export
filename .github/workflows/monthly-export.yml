@@ -47,6 +47,13 @@ jobs:
           mkdir -p ~/.config/rclone
           echo "${{ secrets.RCLONE_CONFIG }}" | base64 -d > ~/.config/rclone/rclone.conf
 
+      - name: Debug rclone config
+        run: |
+          echo "=== CONFIG SECTIONS ==="
+          grep '^\[' ~/.config/rclone/rclone.conf || true
+          echo "=== REMOTES ==="
+          rclone listremotes
+      
       - name: Upload to Google Drive
         run: |
           rclone copy output/ gdrive:"Blogin posts" --drive-root-folder-id 1U5MOuCz-qsdOUafVIX7nCnqNBM_QMK0v
