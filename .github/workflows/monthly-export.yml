@@ -7,10 +7,6 @@ on:
         description: "Quarter to export, e.g. 2026-Q1. Leave empty for previous quarter."
         required: false
         default: ""
-      month:
-        description: "Month to export, e.g. 2026-04. Optional debug/backfill."
-        required: false
-        default: ""
       year:
         description: "Year to export, e.g. 2025. Leave empty unless doing full-year backfill."
         required: false
@@ -37,8 +33,6 @@ jobs:
             bash run_export.sh --year=${{ github.event.inputs.year }}
           elif [ -n "${{ github.event.inputs.quarter }}" ]; then
             bash run_export.sh --quarter=${{ github.event.inputs.quarter }}
-          elif [ -n "${{ github.event.inputs.month }}" ]; then
-            bash run_export.sh --month=${{ github.event.inputs.month }}
           else
             bash run_export.sh --previous-quarter
           fi
