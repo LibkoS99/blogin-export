@@ -2,6 +2,15 @@ name: Monthly Blogin Export
 
 on:
   workflow_dispatch:
+    inputs:
+      month:
+        description: "Month to export, e.g. 2026-04. Leave empty for previous month."
+        required: false
+        type: string
+      year:
+        description: "Year to export, e.g. 2025. Leave empty unless doing yearly backfill."
+        required: false
+        type: string
   schedule:
     - cron: "0 3 1 * *"
 
@@ -18,7 +27,14 @@ jobs:
           php-version: "8.2"
 
       - name: Run export
-        run: bash run_export.sh
+        run: |
+          if [ -n "${{ github.event.inputs.year }}" ]; then
+            bash run_export.sh --year=${{ github.event.inputs.year }}
+          elif [ -n "${{ github.event.inputs.month }}" ]; then
+            bash run_export.sh --month=${{ github.event.inputs.month }}
+          else
+            bash run_export.sh --previous-month
+          fi
         env:
           BLOGIN_API_KEY: ${{ secrets.BLOGIN_API_KEY }}
 
@@ -26,4 +42,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: blogin-posts-json
-          path: posts_*.json
+          path: output/posts_*.json
