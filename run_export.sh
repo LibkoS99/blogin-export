@@ -23,7 +23,7 @@ if [ -z "${BLOGIN_API_KEY:-}" ]; then
 fi
 
 if [ "$#" -eq 0 ]; then
-  set -- --previous-month
+  set -- --previous-quarter
 fi
 
 php "$SCRIPT_DIR/blogin_export.php" "$@"
