@@ -6,11 +6,12 @@ on:
       month:
         description: "Month to export, e.g. 2026-04. Leave empty for previous month."
         required: false
-        type: string
+        default: ""
       year:
-        description: "Year to export, e.g. 2025. Leave empty unless doing yearly backfill."
+        description: "Year to export, e.g. 2025. Leave empty unless doing full-year backfill."
         required: false
-        type: string
+        default: ""
+
   schedule:
     - cron: "0 3 1 * *"
 
@@ -37,6 +38,18 @@ jobs:
           fi
         env:
           BLOGIN_API_KEY: ${{ secrets.BLOGIN_API_KEY }}
+
+      - name: Install rclone
+        run: curl https://rclone.org/install.sh | sudo bash
+
+      - name: Configure rclone
+        run: |
+          mkdir -p ~/.config/rclone
+          echo "${{ secrets.RCLONE_CONFIG }}" > ~/.config/rclone/rclone.conf
+
+      - name: Upload to Google Drive
+        run: |
+          rclone copy output/ gdrive:"Blogin posts" --drive-root-folder-id 1U5MOuCz-qsdOUafVIX7nCnqNBM_QMK0v
 
       - name: Upload JSON artifacts
         uses: actions/upload-artifact@v4
