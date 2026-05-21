@@ -10,7 +10,6 @@ if [ -f "$SCRIPT_DIR/.env" ]; then
   set +a
 fi
 
-# Allow local overrides
 if [ -f "$SCRIPT_DIR/.env.local" ]; then
   set -a
   # shellcheck disable=SC1091
@@ -19,8 +18,12 @@ if [ -f "$SCRIPT_DIR/.env.local" ]; then
 fi
 
 if [ -z "${BLOGIN_API_KEY:-}" ]; then
-  echo "Error: BLOGIN_API_KEY is not set. Create $SCRIPT_DIR/.env or $SCRIPT_DIR/.env.local based on .env.example, or export it." >&2
+  echo "Error: BLOGIN_API_KEY is not set. Create $SCRIPT_DIR/.env or $SCRIPT_DIR/.env.local, or export it." >&2
   exit 1
 fi
 
-php "$SCRIPT_DIR/blogin_export.php"
+if [ "$#" -eq 0 ]; then
+  set -- --previous-month
+fi
+
+php "$SCRIPT_DIR/blogin_export.php" "$@"
